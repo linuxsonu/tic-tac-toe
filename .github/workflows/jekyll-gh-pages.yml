@@ -1,12 +1,11 @@
 name: Debug Artifact Pathing
 
-# 1. TRIGER: Runs on push to main or manually from the Actions tab
+# Required triggers
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
 
-# Permissions are only set for reading the code, as we are not deploying yet
 permissions:
   contents: read
 
@@ -17,20 +16,16 @@ jobs:
       - name: 🚀 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 🐛 DEBUG: List Repository Contents
+      - name: "🐛 DEBUG: List Repository Contents"
         id: debug
-        # This command lists all files and folders recursively (ls -Rla)
-        # It will print the exact, case-sensitive folder names the runner sees.
+        # This will print the exact, case-sensitive names of all files and folders.
         run: |
           echo "--- Listing ALL files in Repo Root ---"
           ls -Rla .
           echo "--- Listing contents of the tic-tac-toe folder ---"
-          # This specifically checks your app folder for the 'dist' folder
+          # This command will fail if the folder 'tic-tac-toe' does not exist
           ls -Rla ./tic-tac-toe
-          
-      - name: 🛑 Skip Deployment
-        # This step ensures the workflow ends successfully after the debug step runs,
-        # preventing the build job from failing on the known 'tar' error.
-        run: echo "Debugging complete. Check the logs for the file paths."
 
-# The 'deploy' job is removed entirely since we are not yet uploading a valid artifact.
+      - name: 🛑 Skip Deployment
+        # Ensures the workflow finishes without error so you can see the logs
+        run: echo "Debugging complete. Check the logs for the file paths."

@@ -28,7 +28,7 @@ jobs:
         with:
           # 👇 CRITICAL: Replace 'YOUR_APP_FOLDER_NAME/dist' with the exact path
           # to the folder you committed (e.g., './tic-tac-toe/dist').
-          path: "./tic-tac-toe/dist"
+          path: "tic-tac-toe/dist"
 
   deploy:
     environment:

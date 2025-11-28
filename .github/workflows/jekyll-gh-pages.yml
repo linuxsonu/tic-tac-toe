@@ -1,52 +1,35 @@
-name: Deploy React to GitHub Pages
+name: Deploy Pre-Built Code to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  # Build Job
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
+        # Gets the code, including your pre-built files
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
-      - name: Upload artifact
+      - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # VITE USERS: Keep this as 'dist'
-          # CREATE REACT APP USERS: Change 'dist' to 'build'
-          path: "./dist"
+          # 👇 CRITICAL: Set the path to the folder you committed
+          # Use the path relative to the root of your repository
+          path: "./YOUR_APP_FOLDER_NAME/dist"
+          # Example path if your app is in 'tic-tac-toe' folder: './tic-tac-toe/dist'
 
-  # Deploy Job
   deploy:
     environment:
       name: github-pages

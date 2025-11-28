@@ -1,6 +1,5 @@
-name: Debug Artifact Pathing
+name: Deploy Pre-Built Static Site
 
-# Required triggers
 on:
   push:
     branches: ["main"]
@@ -8,24 +7,33 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  debug_path:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Checkout Repository
+      - name: 🚀 Checkout Committed Files
         uses: actions/checkout@v4
 
-      - name: "🐛 DEBUG: List Repository Contents"
-        id: debug
-        # This will print the exact, case-sensitive names of all files and folders.
-        run: |
-          echo "--- Listing ALL files in Repo Root ---"
-          ls -Rla .
-          echo "--- Listing contents of the tic-tac-toe folder ---"
-          # This command will fail if the folder 'tic-tac-toe' does not exist
-          ls -Rla ./tic-tac-toe
+      - name: 📦 Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # FIX: The path is now correctly set to the root 'dist' folder
+          path: "./dist"
 
-      - name: 🛑 Skip Deployment
-        # Ensures the workflow finishes without error so you can see the logs
-        run: echo "Debugging complete. Check the logs for the file paths."
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 🌐 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

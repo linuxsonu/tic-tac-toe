@@ -1,28 +1,36 @@
+name: Debug Artifact Pathing
+
+# 1. TRIGER: Runs on push to main or manually from the Actions tab
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Permissions are only set for reading the code, as we are not deploying yet
+permissions:
+  contents: read
+
 jobs:
-  build:
+  debug_path:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: 🚀 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Debug File Structure 🐛 (Run this first)
+      - name: 🐛 DEBUG: List Repository Contents
+        id: debug
+        # This command lists all files and folders recursively (ls -Rla)
+        # It will print the exact, case-sensitive folder names the runner sees.
         run: |
-          echo "--- Listing files in Repo Root ---"
+          echo "--- Listing ALL files in Repo Root ---"
           ls -Rla .
-          echo "--- Listing files inside tic-tac-toe folder ---"
-          # This command will fail if the folder 'tic-tac-toe' does not exist at the root
+          echo "--- Listing contents of the tic-tac-toe folder ---"
+          # This specifically checks your app folder for the 'dist' folder
           ls -Rla ./tic-tac-toe
+          
+      - name: 🛑 Skip Deployment
+        # This step ensures the workflow ends successfully after the debug step runs,
+        # preventing the build job from failing on the known 'tar' error.
+        run: echo "Debugging complete. Check the logs for the file paths."
 
-      # TEMPORARILY COMMENT OUT THE FAILING STEP
-      # - name: 📦 Upload Artifact
-      #   uses: actions/upload-pages-artifact@v3
-      #   with:
-      #     path: './tic-tac-toe/dist'
-
-  deploy:
-    # Set 'needs: []' so deploy doesn't run, or simply remove the deploy job for now
-    # deployment can only run if build is successful
-    runs-on: ubuntu-latest
-    needs: []
-    steps:
-      - run: echo "Skipping deploy for debug"
+# The 'deploy' job is removed entirely since we are not yet uploading a valid artifact.

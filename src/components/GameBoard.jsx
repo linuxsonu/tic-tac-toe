@@ -1,4 +1,4 @@
-export default function GameBoard({ board, onSelectSquare }) {
+export default function GameBoard({ board, disabledCell, onSelectSquare }) {
   const handleSelectedCell = (rowIndex, cellIndex) => {
     onSelectSquare(rowIndex, cellIndex);
   };
@@ -12,7 +12,7 @@ export default function GameBoard({ board, onSelectSquare }) {
               <li key={cellIndex}>
                 <button
                   onClick={() => handleSelectedCell(rowIndex, cellIndex)}
-                  disabled={cell !== null}
+                  disabled={cell !== null || disabledCell}
                 >
                   {cell}
                 </button>

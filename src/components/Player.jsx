@@ -1,5 +1,12 @@
-import { useState } from "react";
-export default function Player({ name, symbol, isActive, changeName }) {
+import { useState, useEffect } from "react";
+export default function Player({
+  name,
+  symbol,
+  isActive,
+  isAi,
+  aiName,
+  changeName,
+}) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(name);
   const toggleEditing = () => {
@@ -8,6 +15,13 @@ export default function Player({ name, symbol, isActive, changeName }) {
       changeName(symbol, inputValue);
     }
   };
+  useEffect(() => {
+    if (isAi) {
+      setInputValue(aiName);
+    } else {
+      setInputValue(name);
+    }
+  }, [aiName, isAi, name]);
   return (
     <li className={isActive ? "active" : ""}>
       <span className="player">
@@ -22,9 +36,11 @@ export default function Player({ name, symbol, isActive, changeName }) {
         )}
         <span className="player-symbol">{symbol}</span>
       </span>
-      <button onClick={() => toggleEditing()}>
-        {isEditing ? "Save" : "Edit"}
-      </button>
+      {!isAi && (
+        <button onClick={() => toggleEditing()}>
+          {isEditing ? "Save" : "Edit"}
+        </button>
+      )}
     </li>
   );
 }
